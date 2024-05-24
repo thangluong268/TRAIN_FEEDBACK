@@ -58,7 +58,7 @@ export class TrainService {
       });
   }
 
-  classifyFeedback(newFeedback: string) {
+  async classifyFeedback(newFeedback: string) {
     this.logger.log('Phân loại phản hồi mới');
 
     // Get Final Text
@@ -76,20 +76,16 @@ export class TrainService {
     // let model = path.join(__dirname, '../data/data-ft.bin');
     const model = 'data-ft.bin';
     const classifier = new fastText.Classifier(model);
-    let labelFT = '';
-    let confidenceFT = 0;
 
-    classifier.predict(newFeedback, 1).then((res) => {
-      if (res.length > 0) {
-        const tag = res[0].label;
-        labelFT = tag.split('__')[tag.split('__').length - 1];
-        confidenceFT = res[0].value;
-      } else {
-        console.log('No matches');
-      }
-    });
+    const res = await classifier.predict(newFeedback, 5);
+    const tag = res[0]?.label;
+    const labelFT = tag?.split('__')[tag?.split('__').length - 1];
+    const confidenceFT = res[0]?.value;
 
-    if (labelBaYes === NEGATIVE && labelFT === NEGATIVE && confidenceFT >= 1) {
+    console.log(labelFT);
+    console.log(confidenceFT);
+
+    if (labelBaYes === NEGATIVE && labelFT === NEGATIVE && confidenceFT >= 0.8) {
       return NEGATIVE;
     } else {
       return POSITIVE;
