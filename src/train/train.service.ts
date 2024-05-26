@@ -1,16 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { NEGATIVE, POSITIVE, TRAIN_MODEL_FILE_PATH_NATURAL } from 'constant/common';
 import { DATA_TRAIN } from 'data/data-bayes';
+import * as natural from 'natural';
 import { copyFile } from 'utils/copy-file.util';
 import { remove, utils_data } from 'utils/text-util.final.util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
-import { AggressiveTokenizerVi, BayesClassifier } from 'natural';
+import { AggressiveTokenizerVi } from 'natural';
 const TOKENIZER = new AggressiveTokenizerVi();
-const CLASSIFIER = new BayesClassifier();
-
-import * as natural from 'natural';
+const CLASSIFIER = new natural.BayesClassifier();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fastText = require('fasttext');
