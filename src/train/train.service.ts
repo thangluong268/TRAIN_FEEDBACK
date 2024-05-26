@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { NEGATIVE, POSITIVE, TRAIN_MODEL_FILE_PATH_BAYES } from 'constant/common';
+import { NEGATIVE, POSITIVE, TRAIN_MODEL_FILE_PATH_NATURAL } from 'constant/common';
 import { DATA_TRAIN } from 'data/data-bayes';
 import { copyFile } from 'utils/copy-file.util';
 import { remove, utils_data } from 'utils/text-util.final.util';
-import { loadClassifier, saveClassifier } from 'utils/vntk.util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-// const Sentiment = require('sentiment');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const vntk = require('vntk');
+const { BayesClassifier, AggressiveTokenizerVi } = require('natural');
+const TOKENIZER = new AggressiveTokenizerVi();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fastText = require('fasttext');
@@ -17,8 +16,9 @@ const fastText = require('fasttext');
 @Injectable()
 export class TrainService {
   private readonly logger = new Logger(TrainService.name);
-  private readonly classifierBayes = new vntk.BayesClassifier();
+  private readonly classifierNatural = new BayesClassifier();
   private readonly classifierFT = new fastText.Classifier();
+
   constructor() {}
 
   trainModel() {
@@ -26,12 +26,16 @@ export class TrainService {
     // Huấn luyện mô hình phân loại
     DATA_TRAIN.forEach((item) => {
       // this.classifier.addDocument(this.tokenizer.tokenize(item.content), item.label);
-      this.classifierBayes.addDocument(item.content, item.label);
+      this.classifierNatural.addDocument(TOKENIZER.tokenize(item.content), item.label);
       console.log('Loading...');
     });
-    this.classifierBayes.train();
+    this.classifierNatural.train();
     // Lưu trữ mô hình đã huấn luyện
-    saveClassifier(this.classifierBayes, TRAIN_MODEL_FILE_PATH_BAYES);
+    this.classifierNatural.save(TRAIN_MODEL_FILE_PATH_NATURAL, (err) => {
+      err
+        ? console.error('Lỗi khi lưu mô hình:', err)
+        : console.log('Mô hình đã được lưu thành công tại:', TRAIN_MODEL_FILE_PATH_NATURAL);
+    });
 
     const data = path.join(__dirname, '../data/data-ft.txt');
     const model = path.join(__dirname, '../data/data-ft');
@@ -67,10 +71,13 @@ export class TrainService {
     const finalText = utils_data(textLowercase);
     console.log(finalText);
 
-    // Phân loại new feedback của bayes
-    const classifierBayesModel = loadClassifier(TRAIN_MODEL_FILE_PATH_BAYES);
-    const labelBaYes = classifierBayesModel.classify(finalText);
-    console.log(labelBaYes);
+    let labelNatural = '';
+    // Phân loại new feedback của natural
+    BayesClassifier.load(TRAIN_MODEL_FILE_PATH_NATURAL, null, function (err, classifier) {
+      const textAfterTokenize = TOKENIZER.tokenize(finalText);
+      labelNatural = classifier.classify(textAfterTokenize);
+      console.log(labelNatural);
+    });
 
     // Phân loại new feedback của fasttext
     // let model = path.join(__dirname, '../data/data-ft.bin');
@@ -85,7 +92,7 @@ export class TrainService {
     console.log(labelFT);
     console.log(confidenceFT);
 
-    if (labelBaYes === NEGATIVE && labelFT === NEGATIVE && confidenceFT >= 0.8) {
+    if ((labelNatural === NEGATIVE && labelFT === NEGATIVE && confidenceFT >= 0.8) || (!labelFT && !confidenceFT)) {
       return NEGATIVE;
     } else {
       return POSITIVE;
