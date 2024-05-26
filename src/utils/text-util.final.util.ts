@@ -15,15 +15,3 @@ export const utils_data = (text: string) => {
   }
   return listText.join(' ');
 };
-
-// Xử lý nhưng
-export const exist_nhung = (text: string) => {
-  let textList = text.split(' ');
-  for (let i = 0; i < textList.length; i++) {
-    if (textList[i] === 'nhưng' || textList[i] === 'nhung') {
-      break;
-    }
-    textList = textList.slice(i + 1);
-  }
-  return textList.join(' ');
-};
