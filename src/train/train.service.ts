@@ -8,6 +8,9 @@ const path = require('path');
 
 import { AggressiveTokenizerVi, BayesClassifier } from 'natural';
 const TOKENIZER = new AggressiveTokenizerVi();
+const CLASSIFIER = new BayesClassifier();
+
+import * as natural from 'natural';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fastText = require('fasttext');
@@ -15,7 +18,6 @@ const fastText = require('fasttext');
 @Injectable()
 export class TrainService {
   private readonly logger = new Logger(TrainService.name);
-  private readonly classifierNatural = new BayesClassifier();
   private readonly classifierFT = new fastText.Classifier();
 
   constructor() {}
@@ -25,12 +27,12 @@ export class TrainService {
     // Huấn luyện mô hình phân loại
     DATA_TRAIN.forEach((item) => {
       // this.classifier.addDocument(this.tokenizer.tokenize(item.content), item.label);
-      this.classifierNatural.addDocument(TOKENIZER.tokenize(item.content), item.label);
+      CLASSIFIER.addDocument(TOKENIZER.tokenize(item.content), item.label);
       console.log('Loading...');
     });
-    this.classifierNatural.train();
+    CLASSIFIER.train();
     // Lưu trữ mô hình đã huấn luyện
-    this.classifierNatural.save(TRAIN_MODEL_FILE_PATH_NATURAL, (err) => {
+    CLASSIFIER.save(TRAIN_MODEL_FILE_PATH_NATURAL, (err) => {
       err
         ? console.error('Lỗi khi lưu mô hình:', err)
         : console.log('Mô hình đã được lưu thành công tại:', TRAIN_MODEL_FILE_PATH_NATURAL);
@@ -72,7 +74,7 @@ export class TrainService {
 
     let labelNatural = '';
     // Phân loại new feedback của natural
-    BayesClassifier.load(TRAIN_MODEL_FILE_PATH_NATURAL, null, function (err, classifier) {
+    natural.BayesClassifier.load(TRAIN_MODEL_FILE_PATH_NATURAL, null, function (err, classifier) {
       const textAfterTokenize = TOKENIZER.tokenize(finalText);
       labelNatural = classifier.classify(textAfterTokenize);
       console.log(labelNatural);
