@@ -9,6 +9,8 @@ const path = require('path');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { BayesClassifier, AggressiveTokenizerVi } = require('natural');
 const TOKENIZER = new AggressiveTokenizerVi();
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const natural = require('natural');
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fastText = require('fasttext');
@@ -73,7 +75,7 @@ export class TrainService {
 
     let labelNatural = '';
     // Phân loại new feedback của natural
-    BayesClassifier.load(TRAIN_MODEL_FILE_PATH_NATURAL, null, function (err, classifier) {
+    natural.BayesClassifier.load(TRAIN_MODEL_FILE_PATH_NATURAL, null, function (err, classifier) {
       const textAfterTokenize = TOKENIZER.tokenize(finalText);
       labelNatural = classifier.classify(textAfterTokenize);
       console.log(labelNatural);
