@@ -92,7 +92,7 @@ export class TrainService {
     console.log(labelFT);
     console.log(confidenceFT);
 
-    if ((labelNatural === NEGATIVE && (labelFT === NEGATIVE && confidenceFT >= 0.5)) || (!labelFT && !confidenceFT)) {
+    if ((labelNatural === NEGATIVE && labelFT === NEGATIVE && confidenceFT >= 0.5) || (!labelFT && !confidenceFT)) {
       return NEGATIVE;
     } else {
       return POSITIVE;
