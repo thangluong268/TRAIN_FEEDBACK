@@ -12,8 +12,6 @@ RUN npm install
 
 # Copy the source code into the container
 COPY src ./src
-COPY classifier.json ./
-COPY data-ft.bin ./
 COPY nest-cli.json ./
 COPY tsconfig*.json ./
 
@@ -30,8 +28,6 @@ WORKDIR /app
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/classifier.json ./
-COPY --from=build /app/data-ft.bin ./
 
 # Expose the port used by your NestJS application
 EXPOSE 5001

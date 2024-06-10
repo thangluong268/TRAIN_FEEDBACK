@@ -44,7 +44,7 @@ jobs:
 
     - name: Docker Compose Up
       run: |
-        cd ~/workspace/train-feedback/TRAIN_FEEDBACK/
+        cd ~/workspace/actions-runner/_work/TRAIN_FEEDBACK/TRAIN_FEEDBACK/
         docker-compose up -d
 
     - name: Clean Docker
