@@ -1,0 +1,40 @@
+# Stage 1: Build the application
+FROM node:18 AS build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the package.json and package-lock.json to the container
+COPY package*.json ./
+
+# Install production dependencies
+RUN npm install
+
+# Copy the source code into the container
+COPY src ./src
+COPY classifier.json ./
+COPY data-ft.bin ./
+COPY nest-cli.json ./
+COPY tsconfig*.json ./
+
+# Build your NestJS application
+RUN npm run build
+
+# Stage 2: Create a production-ready image
+FROM node:lts-bookworm-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the production dependencies from the build stage
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/classifier.json ./
+COPY --from=build /app/data-ft.bin ./
+
+# Expose the port used by your NestJS application
+EXPOSE 5001
+
+# Start your NestJS application in production mode
+CMD ["npm", "run", "start:prod"]
