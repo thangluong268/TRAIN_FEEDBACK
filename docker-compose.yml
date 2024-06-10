@@ -3,6 +3,7 @@ services:
   train-feedback:
     container_name: train-feedback
     image: thang268/train-feedback:latest
+    restart: always
     ports:
       - '5001:5001'
 
