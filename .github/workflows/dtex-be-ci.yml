@@ -46,8 +46,8 @@ jobs:
     steps:
     - name: Stop & Remove Image
       run: |
-        docker stop thang268/train-feedback || true
-        docker rm thang268/train-feedback || true
+        docker image stop "${{ secrets.DOCKER_HUB_USERNAME }}"/train-feedback || true
+        docker image rm "${{ secrets.DOCKER_HUB_USERNAME }}"/train-feedback || true
 
     - name: Pull Docker
       run: docker pull "${{ secrets.DOCKER_HUB_USERNAME }}"/train-feedback:latest
