@@ -29,6 +29,11 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
     
+    - name: Set up env file
+      run: |
+        touch .env
+        echo "${{ secrets.ENV_FILE }}" > .env
+    
     - name: Build Docker
       run: docker build -t "${{ secrets.DOCKER_HUB_USERNAME }}"/train-feedback .
   
