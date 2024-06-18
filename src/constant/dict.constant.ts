@@ -47,4 +47,7 @@ export const DICT = [
   ['lz', 'âm đạo'],
   ['fuk', 'fuck'],
   ['djt', 'fuck'],
+  ['th', 'thôi'],
+  ['fen', 'bạn'],
+  ['bro', 'bạn'],
 ];

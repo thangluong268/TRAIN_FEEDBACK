@@ -34,12 +34,12 @@ export class ClassifyService {
         headers,
       });
       data = res.data.flat();
+      console.log(data);
+      const result = data[0].score >= 0.7 ? data[0].label : POSITIVE;
+      return result;
     } catch (error) {
       console.error('Error:', error.message);
     }
-    console.log(data);
-    const result = data[0].score >= 0.7 ? data[0].label : POSITIVE;
-    return result;
   }
 
   async translate2English(text: string) {
