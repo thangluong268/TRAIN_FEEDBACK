@@ -11,7 +11,7 @@ export class TrainController {
   }
 
   @Post()
-  classifyFeedback(@Body() body: { newFeedback: string }) {
-    return this.trainService.classifyFeedback(body.newFeedback);
+  classifyFeedback(@Body() body: { text: string }) {
+    return this.trainService.classifyFeedback(body.text);
   }
 }
