@@ -55,7 +55,7 @@ jobs:
     - name: Docker Compose Up
       run: |
         cd ~/workspace/actions-runner/_work/TRAIN_FEEDBACK/TRAIN_FEEDBACK/
-        docker-compose up -d
+        docker compose up -d
 
     - name: Clean Docker
       run: docker system prune -fa
